@@ -1,53 +1,42 @@
-const notes = require("../fixtures/notes");
-const note1 = require("../fixtures/note1");
-const note2 = require("../fixtures/note2");
-
-Cypress.Commands.add("login", () => {
+Cypress.Commands.add("login", (params = {}) => {
   cy.visit("/login");
 
   cy.get("#email").type(Cypress.env("user"));
   cy.get("#password").type(Cypress.env("password"));
   cy.get("button").contains("Login").click();
-});
 
-Cypress.Commands.add("mockEmptyNotes", () => {
   cy.server();
-  cy.route({
-    method: "GET",
-    url: "**/notes",
-    response: []
-  }).as("getNotes");
+
+  params.notes ?
+    cy.route({
+      method: "GET",
+      url: "**/notes",
+      response: params.notes
+    }).as("getNotes") :
+    cy.route({
+      method: "GET",
+      url: "**/notes",
+    }).as("getNotes");
 
   cy.wait("@getNotes");
 });
 
-Cypress.Commands.add("mockTwoNotes", () => {
+Cypress.Commands.add("goToNote", () => {
+  const note1 = require("../fixtures/note1");
+
   cy.server();
   cy.route({
     method: "GET",
-    url: "**/notes",
-    response: notes
-  }).as("getNotes");
-
-  cy.wait("@getNotes");;
-});
-
-Cypress.Commands.add("goToMockedFirstNote", () => {
-  cy.server();
-  cy.route({
-    method: "GET",
-    url: "**/notes/1",
+    url: "**/notes/**",
     response: note1
   }).as("getNote");
 
-  cy.get(".list-group-item")
-    .eq(1)
-    .click();
+  cy.visit("/notes/1");
 
   cy.wait("@getNote");
 });
 
-Cypress.Commands.add("deleteMockedFirstNote", () => {
+Cypress.Commands.add("deleteMockedNote", () => {
   cy.server();
   cy.route({
     method: "DELETE",
@@ -60,9 +49,7 @@ Cypress.Commands.add("deleteMockedFirstNote", () => {
   cy.route({
     method: "GET",
     url: "**/notes",
-    response: [
-      note2
-    ]
+    response: []
   }).as("getNotes");
 
   cy.contains("Delete").click();

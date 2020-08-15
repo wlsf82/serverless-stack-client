@@ -1,36 +1,32 @@
-const constants =  require("../../fixtures/constants");
+const CREATE_A_NEW_NOTE =  "Create a new note";
 
-describe("Given I'm logged into the app", () => {
-  beforeEach(() => cy.login());
+describe("Given I'm logged into the app - empty state", () => {
+  beforeEach(() => cy.login({ notes: [] }));
 
-  context("When simulating no notes for the user on DynamoDB", () => {
-    beforeEach(() => cy.mockEmptyNotes());
-
-    it("Then only one '.list-group-item' is shown, for adding a new note", () => {
-      cy.get(".list-group-item")
-        .should("have.length", 1)
-        .and("contain", constants.CREATE_A_NEW_NOTE);
-    });
+  it("Then only one '.list-group-item' is shown, for adding a new note", () => {
+    cy.get(".list-group-item")
+      .should("have.length", 1)
+      .and("contain", CREATE_A_NEW_NOTE);
   });
+});
 
-  context("When simulating two notes for the user on DynamoDB", () => {
-    beforeEach(() => cy.mockTwoNotes());
+describe("Given I'm logged into the app - two notes", () => {
+  const notes = require("../../fixtures/notes");
 
-    it("Then three '.list-group-item's are shown, all with the proper content", () => {
-      const notes = require("../../fixtures/notes");
+  beforeEach(() => cy.login({ notes }));
 
-      cy.get(".list-group-item")
-        .as("list-group-item")
-        .should("have.length", 3);
-      cy.get("@list-group-item")
-        .eq(0)
-        .should("contain", constants.CREATE_A_NEW_NOTE);
-      cy.get("@list-group-item")
-        .eq(1)
-        .should("contain", notes[0].content);
-      cy.get("@list-group-item")
-        .eq(2)
-        .should("contain", notes[1].content);
-    });
+  it("Then three '.list-group-item's are shown, all with the proper content", () => {
+    cy.get(".list-group-item")
+      .as("list-group-item")
+      .should("have.length", 3);
+    cy.get("@list-group-item")
+      .eq(0)
+      .should("contain", CREATE_A_NEW_NOTE);
+    cy.get("@list-group-item")
+      .eq(1)
+      .should("contain", notes[0].content);
+    cy.get("@list-group-item")
+      .eq(2)
+      .should("contain", notes[1].content);
   });
 });
