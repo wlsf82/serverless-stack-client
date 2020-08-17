@@ -1,3 +1,5 @@
+import 'cypress-file-upload';
+
 Cypress.Commands.add("login", (params = {}) => {
   cy.visit("/login");
 
