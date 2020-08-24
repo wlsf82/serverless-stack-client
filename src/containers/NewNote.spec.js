@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter } from 'react-router-dom'
 import { AppContext } from "../libs/contextLib";
 import AuthenticatedRoute from "../components/AuthenticatedRoute";
 import NewNote from "./NewNote";
@@ -7,11 +8,13 @@ import { mount } from "cypress-react-unit-test"
 describe("NewNote", () => {
   beforeEach(() => {
     mount(
-      <AppContext.Provider value={{ isAuthenticated: true, userHasAuthenticated: true }}>
-        <AuthenticatedRoute exact path="/notes/new">
-          <NewNote />
-        </AuthenticatedRoute>
-      </AppContext.Provider>,
+      <BrowserRouter>
+        <AppContext.Provider value={{ isAuthenticated: true, userHasAuthenticated: true }}>
+          <AuthenticatedRoute>
+            <NewNote />
+          </AuthenticatedRoute>
+        </AppContext.Provider>
+      </BrowserRouter>,
       {
         stylesheets: [
           "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
