@@ -45,7 +45,7 @@ describe("NewNote", () => {
       cy.get("input[type='file']").attachFile(textFile);
     });
 
-    it("Tries to attaches a large file", () => {
+    it("Tries to attach a large file", () => {
       const textFile = "../../cypress/fixtures/large-file.txt";
       cy.get("input[type='file']").attachFile(textFile);
 
