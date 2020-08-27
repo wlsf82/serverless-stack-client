@@ -15,30 +15,34 @@ Cypress.Commands.add("fillLoginFormAndSubmit", (user = {
   cy.get("#email").type(user.name);
   cy.get("#password").type(user.password);
   cy.get("button").contains("Login").click();
-})
+});
 
-Cypress.Commands.add("createNote", noteText => {
-  const sampleFile = "../../cypress/fixtures/sample-file.txt";
+const sampleFile = "../../cypress/fixtures/sample-file.txt";
 
+Cypress.Commands.add("createNote", (noteText, file = sampleFile) => {
   cy.contains("Your Notes").should("be.visible");
 
   cy.contains("Create a new note")
     .should("be.visible")
     .click();
 
+  cy.fillNewNotesFormAndSubmit(noteText, file);
+
+  cy.waitForNotes();
+});
+
+Cypress.Commands.add("fillNewNotesFormAndSubmit", (noteText, file) => {
   cy.get("#content")
     .should("be.visible")
     .type(noteText);
 
   cy.get("input[type='file']")
     .should("exist")
-    .attachFile(sampleFile);
+    .attachFile(file);
 
   cy.contains("Create")
     .should("be.visible")
     .click();
-
-  cy.waitForNotes();
 });
 
 Cypress.Commands.add("editNote", (note, updatedNote) => {
