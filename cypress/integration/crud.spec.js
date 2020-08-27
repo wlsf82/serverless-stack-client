@@ -1,7 +1,7 @@
 const faker = require("faker");
 
 describe("CRUD", () => {
-  it('properly processes CRUD operations', () => {
+  it("properly processes CRUD operations", () => {
     cy.login();
     
     const noteTextContent = faker.random.words(5)

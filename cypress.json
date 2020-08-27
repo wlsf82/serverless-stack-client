@@ -2,5 +2,6 @@
   "baseUrl": "http://localhost:3000",
   "testFiles": "**/*spec.js",
   "experimentalComponentTesting": true,
-  "componentFolder": "src"
+  "componentFolder": "src",
+  "chromeWebSecurity": false
 }

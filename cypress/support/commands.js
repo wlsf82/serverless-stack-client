@@ -1,4 +1,4 @@
-import 'cypress-file-upload';
+import "cypress-file-upload";
 
 Cypress.Commands.add("login", () => {
   cy.visit("/login");
@@ -26,7 +26,7 @@ Cypress.Commands.add("createNote", noteText => {
     .should("be.visible")
     .click();
 
-  cy.get('#content')
+  cy.get("#content")
     .should("be.visible")
     .type(noteText);
 
@@ -46,7 +46,7 @@ Cypress.Commands.add("editNote", (note, updatedNote) => {
 
   cy.clickNote(note);
 
-  cy.get('#content')
+  cy.get("#content")
     .should("be.visible")
     .clear()
     .type(updatedNote);
@@ -89,4 +89,19 @@ Cypress.Commands.add("clickNote", note => {
   cy.contains(note)
     .should("be.visible")
     .click();
+});
+
+Cypress.Commands.add("fillSettingsFormAndSubmit", () => {
+  const faker = require("faker");
+
+  cy.get("#storage").type("10");
+  cy.get("#name").type(`${faker.name.firstName()} ${faker.name.lastName()}`);
+  cy.iframe(".__PrivateStripeElement > iframe")
+    .find("input[name='cardnumber']").type("4242424242424242");
+  cy.iframe(".__PrivateStripeElement > iframe")
+    .find("input[name='exp-date']").type("12/30");
+  cy.iframe(".__PrivateStripeElement > iframe")
+    .find("input[name='cvc']").type("12345678");
+
+  cy.contains("Purchase").click();
 });

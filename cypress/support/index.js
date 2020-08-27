@@ -1,3 +1,4 @@
-import '@cypress/code-coverage/support'
-import './commands'
-require('cypress-react-unit-test/support')
+import "@cypress/code-coverage/support"
+import "cypress-iframe";
+import "./commands"
+require("cypress-react-unit-test/support")
