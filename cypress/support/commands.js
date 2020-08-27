@@ -3,12 +3,19 @@ import 'cypress-file-upload';
 Cypress.Commands.add("login", () => {
   cy.visit("/login");
 
-  cy.get("#email").type(Cypress.env("user"));
-  cy.get("#password").type(Cypress.env("password"));
-  cy.get("button").contains("Login").click();
+  cy.fillLoginFormAndSubmit();
 
   cy.waitForNotes();
 });
+
+Cypress.Commands.add("fillLoginFormAndSubmit", (user = {
+  name: Cypress.env("user"),
+  password: Cypress.env("password")
+}) => {
+  cy.get("#email").type(user.name);
+  cy.get("#password").type(user.password);
+  cy.get("button").contains("Login").click();
+})
 
 Cypress.Commands.add("createNote", noteText => {
   const sampleFile = "../../cypress/fixtures/sample-file.txt";
@@ -35,12 +42,18 @@ Cypress.Commands.add("createNote", noteText => {
 });
 
 Cypress.Commands.add("editNote", (note, updatedNote) => {
+  const sampleFile2 = "../../cypress/fixtures/sample-file-2.txt";
+
   cy.clickNote(note);
 
   cy.get('#content')
     .should("be.visible")
     .clear()
     .type(updatedNote);
+
+  cy.get("input[type='file']")
+    .should("exist")
+    .attachFile(sampleFile2);
 
   cy.contains("Save")
     .should("be.visible")

@@ -1,6 +1,6 @@
 const faker = require("faker");
 
-describe("End-to-end", () => {
+describe("CRUD", () => {
   it('properly processes CRUD operations', () => {
     cy.login();
     
