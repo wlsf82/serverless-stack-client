@@ -3,6 +3,7 @@ describe("Login", () => {
     name: Cypress.env("user"),
     password: "invalid-password"
   }
+
   beforeEach(() => {
     cy.visit("/login");
 
