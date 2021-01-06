@@ -1,13 +1,5 @@
 import "cypress-file-upload";
 
-Cypress.Commands.add("login", () => {
-  cy.visit("/login");
-
-  cy.fillLoginFormAndSubmit();
-
-  cy.waitForNotes();
-});
-
 Cypress.Commands.add("fillLoginFormAndSubmit", (user = {
   name: Cypress.env("user"),
   password: Cypress.env("password")
@@ -15,68 +7,72 @@ Cypress.Commands.add("fillLoginFormAndSubmit", (user = {
   cy.get("#email").type(user.name);
   cy.get("#password").type(user.password);
   cy.get("button").contains("Login").click();
+})
+
+Cypress.Commands.add("login", (user = {
+  name: Cypress.env("user"),
+  password: Cypress.env("password")
+}) => {
+  cy.visit("/login");
+  cy.fillLoginFormAndSubmit(user);
 });
 
-const sampleFile = "../../cypress/fixtures/sample-file.txt";
-
-Cypress.Commands.add("createNote", (noteText, file = sampleFile) => {
-  cy.contains("Your Notes").should("be.visible");
-
+Cypress.Commands.add("createNote", (note = {
+  text,
+  fail: false,
+}) => {
   cy.contains("Create a new note")
     .should("be.visible")
     .click();
-
-  cy.fillNewNotesFormAndSubmit(noteText, file);
-
-  cy.waitForNotes();
-});
-
-Cypress.Commands.add("fillNewNotesFormAndSubmit", (noteText, file) => {
   cy.get("#content")
     .should("be.visible")
-    .type(noteText);
+    .type(note.text);
 
-  cy.get("input[type='file']")
-    .should("exist")
-    .attachFile(file);
+  if (note.file) {
+    cy.get("input[type='file']")
+      .should("exist")
+      .attachFile(note.file);
+  }
 
   cy.contains("Create")
     .should("be.visible")
     .click();
+
+  if (!note.fail) {
+    cy.waitForNotes();
+    cy.contains(note.text)
+      .should('be.visible');
+  }
 });
 
-Cypress.Commands.add("editNote", (note, updatedNote) => {
-  const sampleFile2 = "../../cypress/fixtures/sample-file-2.txt";
+Cypress.Commands.add("editNote", (note) => {
+  const newNoteText = `${note.text} updated`;
+  const sampleFile = "../../cypress/fixtures/sample-file.txt";
 
-  cy.clickNote(note);
-
+  cy.clickNote(note.text);
   cy.get("#content")
     .should("be.visible")
     .clear()
-    .type(updatedNote);
-
+    .type(newNoteText);
   cy.get("input[type='file']")
     .should("exist")
-    .attachFile(sampleFile2);
-
+    .attachFile(sampleFile);
   cy.contains("Save")
     .should("be.visible")
     .click();
-
   cy.waitForNotes();
+  cy.contains(newNoteText)
+    .should('be.visible');
 });
 
 Cypress.Commands.add("deleteNote", note => {
   cy.clickNote(note);
-
   cy.contains("Delete")
     .should("be.visible")
     .click();
-
   cy.waitForNotes();
-
   cy.contains(note)
-    .should("not.be.visible");
+    .should("not.exist");
 });
 
 Cypress.Commands.add("waitForNotes", () => {
@@ -85,7 +81,6 @@ Cypress.Commands.add("waitForNotes", () => {
     method: "GET",
     url: "**/notes",
   }).as("getNotes");
-
   cy.wait("@getNotes");
 });
 
@@ -106,6 +101,5 @@ Cypress.Commands.add("fillSettingsFormAndSubmit", () => {
     .find("input[name='exp-date']").type("12/30");
   cy.iframe(".__PrivateStripeElement > iframe")
     .find("input[name='cvc']").type("12345678");
-
   cy.contains("Purchase").click();
 });

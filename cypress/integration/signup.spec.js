@@ -9,7 +9,8 @@ describe("Signup", () => {
     });
 
     it("keeps the signup button disabled", () => {
-      cy.get("button").contains("Signup")
+      cy.get("button")
+        .contains("Signup")
         .should("be.disabled");
     });
   });

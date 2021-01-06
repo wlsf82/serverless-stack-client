@@ -1,28 +1,26 @@
 const faker = require("faker");
 
 describe("CRUD", () => {
+  beforeEach(() => cy.login());
+
   it("properly processes CRUD operations", () => {
-    cy.login();
-    
-    const noteTextContent = faker.random.words(5);
+    const randomNoteText = faker.random.words(5);
+    const note = { text: randomNoteText };
 
-    cy.createNote(noteTextContent);
-
-    const updatedNoteTextContent = `${noteTextContent} updated`;
-
-    cy.editNote(noteTextContent, updatedNoteTextContent);
-
-    cy.deleteNote(updatedNoteTextContent);
+    cy.createNote(note);
+    cy.editNote(note);
+    cy.deleteNote(`${note.text} updated`);
   });
 
   it("alerts that file is too big", () => {
-    const noteTextContent = faker.random.words(5);
     const largeFile = "../../cypress/fixtures/large-file.txt";
+    const note = {
+      text: faker.random.words(5),
+      file: largeFile,
+      fail: true,
+    }
 
-    cy.login();
-    cy.contains("Create a new note").click();
-
-    cy.fillNewNotesFormAndSubmit(noteTextContent, largeFile);
+    cy.createNote(note);
 
     cy.on("window:alert", str => expect(str).to.equal(
       "Please pick a file smaller than 5 MB."

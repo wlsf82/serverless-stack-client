@@ -4,12 +4,17 @@ describe("Redirect", () => {
 
     cy.visit(newNotesRelativeUrl);
 
-    cy.url()
-      .should("be.equal", `${Cypress.config("baseUrl")}/login?redirect=/${newNotesRelativeUrl}`);
+    cy.url().should(
+      "be.equal",
+      `${Cypress.config("baseUrl")}/login?redirect=/${newNotesRelativeUrl}`
+    );
 
     cy.fillLoginFormAndSubmit();
 
-    cy.url().should("be.equal", `${Cypress.config("baseUrl")}/${newNotesRelativeUrl}`);
+    cy.url().should(
+      "be.equal",
+      `${Cypress.config("baseUrl")}/${newNotesRelativeUrl}`
+    );
 
     cy.visit("/login");
 

@@ -7,10 +7,7 @@ describe("Empty list of notes", () => {
       response: []
     }).as("getNotes");
 
-    cy.visit("/login");
-
-    cy.fillLoginFormAndSubmit();
-
+    cy.login();
     cy.wait("@getNotes");
   });
 
